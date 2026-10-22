@@ -39,7 +39,7 @@ export default function XssChallenge() {
   return <Stack spacing={3}>
     <Typography variant="h1">Desafio: XSS armazenado</Typography>
     <Alert severity="warning">
-      Esta tela renderiza comentários sem escape de propósito. Use somente dados de laboratório.
+      Esta tela renderiza comentários de forma segura. Use somente dados de laboratório.
     </Alert>
     {error && <Alert severity="error">{error}</Alert>}
     <Paper sx={{ p: 3 }}>
@@ -61,10 +61,12 @@ export default function XssChallenge() {
     </Paper>
     <Paper sx={{ p: 3 }}>
       <Typography variant="h2" sx={{ fontSize: '1.5rem' }}>Comentários</Typography>
-      {/* OWASP Top 10:2025 A05 - Injeção (XSS armazenado):
-          dangerouslySetInnerHTML interpreta o comentário como HTML sem escape ou sanitização. */}
+      
+      {/* CORRIGIDO: Renderização segura usando filhos do React em vez de dangerouslySetInnerHTML */}
       {comments.map(comment => (
-        <div key={comment.id} dangerouslySetInnerHTML={{ __html: `<p>${comment.content}</p>` }} />
+        <Typography key={comment.id} component="p" sx={{ mt: 1, mb: 1, p: 1, bgcolor: 'action.hover', borderRadius: 1 }}>
+          {comment.content}
+        </Typography>
       ))}
     </Paper>
   </Stack>

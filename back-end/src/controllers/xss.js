@@ -1,4 +1,5 @@
 import prisma from '../database/client.js'
+import sanitizeHtml from 'sanitize-html' // Biblioteca recomendada para Node.js
 
 const controller = {}
 
@@ -18,10 +19,17 @@ controller.retrieveComments = async function(req, res) {
 
 controller.createComment = async function(req, res) {
   try {
-    // OWASP Top 10:2025 A05 - Injeção (XSS armazenado):
-    // o conteúdo é persistido sem sanitização e depois interpretado como HTML em XssChallenge.jsx.
+    const rawContent = req.body?.content ?? ''
+
+    // Sanitiza o conteúdo removendo scripts maliciosos e tags perigosas.
+    // Se o campo aceitar apenas texto puro, você pode configurar allowedTags: [].
+    const sanitizedContent = sanitizeHtml(rawContent, {
+      allowedTags: [],          // Remove todas as tags HTML (converte para texto puro seguro)
+      allowedAttributes: {}     // Remove todos os atributos (como onclick, onerror, etc.)
+    })
+
     await prisma.xssComment.create({
-      data: { content: req.body?.content ?? '' }
+      data: { content: sanitizedContent }
     })
 
     res.status(201).end()
