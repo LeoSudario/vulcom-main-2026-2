@@ -79,7 +79,7 @@ controller.create = async function(req, res) {
   }
 }
 
-// Listagem de usuários
+// Listagem de todos os usuários
 controller.retrieveAll = async function(req, res) {
   try {
     const users = await prisma.user.findMany({
